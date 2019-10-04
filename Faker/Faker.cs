@@ -50,12 +50,17 @@ namespace Faker
 
         private void GenerateFields(Type type, object dto)
         {
-
+            FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+            foreach(var field in fields)
+            {
+                field.SetValue(dto, GenerateValue(field.FieldType));
+            }
         }
 
 
         private object GenerateValue(Type type)
         {
+            Console.WriteLine(type);
             return null;
         }
     }
