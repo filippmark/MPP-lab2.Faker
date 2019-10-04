@@ -11,7 +11,8 @@ namespace Faker
         {
             object dto;
             Dictionary<string, object> constructorParams = GenerateValuesForConstructor(typeof(T), out dto);
-            return;
+            GeneratePublicProperties(typeof(T), constructorParams, dto);
+            return (T)dto;
         }
 
         private Dictionary<string, object> GenerateValuesForConstructor(Type type, out object dto)
@@ -26,7 +27,7 @@ namespace Faker
                 }
             }
             ParameterInfo[] parameters = constructor.GetParameters();
-            Dictionary<string, Object> generatedParams = new Dictionary<string, object>();
+            Dictionary<string, object> generatedParams = new Dictionary<string, object>();
             foreach (var param in parameters)
             {
                 generatedParams.Add(param.Name, GenerateValue(param.ParameterType));
@@ -34,6 +35,24 @@ namespace Faker
             dto = constructor.Invoke(generatedParams.Values.ToArray());
             return generatedParams;
         }
+
+        private void GeneratePublicProperties(Type type, Dictionary<string, object> initialized, object dto)
+        {
+            PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+            foreach (var property in properties)
+            {
+                if (property.CanWrite && (!initialized.ContainsKey(property.Name)))
+                {
+                    property.SetValue(dto, GenerateValue(property.PropertyType));
+                }
+            }
+        }
+
+        private void GenerateFields(Type type, object dto)
+        {
+
+        }
+
 
         private object GenerateValue(Type type)
         {
