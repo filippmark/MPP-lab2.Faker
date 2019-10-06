@@ -2,11 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using GeneratorChooser;
 
-namespace Faker
+namespace FakerImplementation
 {
-    class Faker : IFaker
+    public class Faker : IFaker
     {
+        private Chooser chooser;
+
+        public Faker()
+        {
+            chooser = new Chooser();
+        }
+
         public T Create<T>()
         {
             object dto;
@@ -43,6 +51,8 @@ namespace Faker
             {
                 if (property.CanWrite && (!initialized.ContainsKey(property.Name)))
                 {
+                    Console.WriteLine(property.Name);
+                    Console.WriteLine(property.PropertyType);
                     property.SetValue(dto, GenerateValue(property.PropertyType));
                 }
             }
@@ -57,11 +67,10 @@ namespace Faker
             }
         }
 
-
         private object GenerateValue(Type type)
         {
-            Console.WriteLine(type);
-            return null;
+            Console.WriteLine(chooser.GenerateValue(type));
+            return chooser.GenerateValue(type);
         }
     }
 }

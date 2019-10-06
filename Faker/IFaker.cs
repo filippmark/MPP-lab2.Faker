@@ -1,4 +1,4 @@
-﻿namespace Faker
+﻿namespace FakerImplementation
 {
     interface IFaker
     {
