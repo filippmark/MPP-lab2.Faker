@@ -7,7 +7,6 @@ namespace Generators
     {
         public StringGenerator(Random random) : base(random)
         {
-
         }
 
         public override object GenerateValue()

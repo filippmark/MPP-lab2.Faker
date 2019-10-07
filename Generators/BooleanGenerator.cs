@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Generators
 {
@@ -8,12 +6,11 @@ namespace Generators
     {
         public BooleanGenerator(Random random) : base(random)
         {
-            
         }
 
         public override object GenerateValue()
         {
-            return Random.Next(0, 1) == 1 ? true : false; 
+            return Random.Next(0, 1) == 1 ? true : false;
         }
     }
 }
