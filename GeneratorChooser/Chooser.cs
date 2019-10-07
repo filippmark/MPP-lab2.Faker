@@ -14,7 +14,7 @@ namespace GeneratorChooser
 
         public object GenerateValue(Type type)
         {
-            Console.WriteLine(type);
+            Console.WriteLine();
             IntGenerator intGenerator = new IntGenerator(random);
             return intGenerator.GenerateValue();
         }
