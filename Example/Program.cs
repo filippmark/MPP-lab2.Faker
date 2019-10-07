@@ -1,6 +1,6 @@
-﻿using System;
+﻿using ClassesForDTO;
 using FakerImplementation;
-using ClassesForDTO;
+using System;
 
 namespace Example
 {

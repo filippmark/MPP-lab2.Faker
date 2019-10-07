@@ -2,15 +2,15 @@
 
 namespace Generators
 {
-    public class IntGenerator : Generator
+    class DoubleGenerator : Generator
     {
-        public IntGenerator(Random random) : base(random)
+        public DoubleGenerator(Random random) : base(random)
         {
         }
 
         public override object GenerateValue()
         {
-            return Random.Next();
+            return Random.NextDouble();
         }
     }
 }

@@ -2,15 +2,16 @@
 
 namespace Generators
 {
-    public class IntGenerator : Generator
+    class ByteGenerator : Generator
     {
-        public IntGenerator(Random random) : base(random)
+        public ByteGenerator(Random random) : base(random)
         {
+
         }
 
         public override object GenerateValue()
         {
-            return Random.Next();
+            return (byte)Random.Next();
         }
     }
 }

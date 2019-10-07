@@ -1,8 +1,8 @@
-﻿using System;
+﻿using GeneratorChooser;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using GeneratorChooser;
 
 namespace FakerImplementation
 {
@@ -12,7 +12,7 @@ namespace FakerImplementation
 
         public Faker()
         {
-            chooser = new Chooser();
+            chooser = new Chooser(new Random());
         }
 
         public T Create<T>()
@@ -61,7 +61,7 @@ namespace FakerImplementation
         private void GenerateFields(Type type, object dto)
         {
             FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-            foreach(var field in fields)
+            foreach (var field in fields)
             {
                 field.SetValue(dto, GenerateValue(field.FieldType));
             }
