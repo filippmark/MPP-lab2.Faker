@@ -1,10 +1,10 @@
 ﻿using GeneratorChooser;
+using Generators;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using Generators;
-using System.IO;
 
 namespace FakerImplementation
 {
@@ -16,7 +16,8 @@ namespace FakerImplementation
         public Faker()
         {
             _generator = new Dictionary<string, Generator>();
-            UploadPlugins(@"/Plugins").ToList().ForEach(x => _generator[x.Key] = x.Value);
+            AddGenerators(_generator);
+            //UploadPlugins(@"Plugins", _generator);
             _chooser = new Chooser(new Random());
         }
 
@@ -76,23 +77,40 @@ namespace FakerImplementation
             }
         }
 
-        private Dictionary<string, Generator> UploadPlugins(string path)
+        private void AddGenerators(Dictionary<string, Generator> generators)
+        {
+            Assembly assembly = Assembly.GetAssembly(typeof(Generator));
+            var types = assembly.DefinedTypes;
+            Random random = new Random();
+
+            foreach (var type in types)
+            {
+                if (!(type.IsAbstract || type.IsInterface))
+                {
+                    Console.WriteLine(type);
+                    ConstructorInfo[] constructorInfo = type.GetConstructors();
+                    Generator generator = (Generator)constructorInfo[0].Invoke(new object[] { random });
+                    generators.Add(type.FullName, generator);
+                }
+            }
+        }
+
+        private void UploadPlugins(string path, Dictionary<string, Generator> generators)
         {
             Type pluginType = typeof(Generator);
             List<Type> plugins = new List<Type>();
-            Dictionary<string, Generator> generators = new Dictionary<string, Generator>();
             var pluginDirectory = new DirectoryInfo(path);
 
             if (pluginDirectory.Exists)
             {
                 string[] pluginFiles = Directory.GetFiles(path, "*.dll");
-                foreach(var file in pluginFiles)
+                foreach (var file in pluginFiles)
                 {
                     Assembly assembly = Assembly.LoadFrom(file);
                     Type[] types = assembly.GetTypes();
                     foreach (var type in types)
                     {
-                        if ((!(type.IsInterface || type.IsAbstract)) && (type.GetInterface(pluginType.FullName) != null))
+                        if ((!(type.IsInterface || type.IsAbstract)) && (type.GetInterfaces().Contains(typeof(Generator))))
                         {
                             plugins.Add(type);
                         }
@@ -100,20 +118,18 @@ namespace FakerImplementation
                 }
 
                 Random random = new Random();
-                foreach(var plugin in plugins)
+                foreach (var plugin in plugins)
                 {
                     Generator generator = (Generator)Activator.CreateInstance(plugin, random);
                     generators.Add(plugin.FullName, generator);
                 }
             }
-
-            return generators;
         }
 
         private object GenerateValue(Type type)
         {
             Console.WriteLine(_chooser.GenerateValue(type));
-            return null;  //_chooser.GenerateValue(type);
+            return null;
         }
     }
 }

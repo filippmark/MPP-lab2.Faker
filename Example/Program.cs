@@ -9,8 +9,8 @@ namespace Example
         static void Main(string[] args)
         {
             Faker faker = new Faker();
-            faker.Create<Class1>();
-            Console.WriteLine("Hello World!");
+            //faker.Create<Class1>();
+            //Console.WriteLine("Hello World!");
         }
     }
 }
