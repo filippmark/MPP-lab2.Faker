@@ -6,6 +6,7 @@ namespace Generators
     {
         public DoubleGenerator(Random random) : base(random)
         {
+            GeneratedType = typeof(double);
         }
 
         public override object GenerateValue()

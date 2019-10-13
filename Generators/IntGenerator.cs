@@ -6,6 +6,7 @@ namespace Generators
     {
         public IntGenerator(Random random) : base(random)
         {
+            GeneratedType = typeof(int);
         }
 
         public override object GenerateValue()

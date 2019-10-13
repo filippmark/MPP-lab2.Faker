@@ -1,6 +1,7 @@
 ﻿using ClassesForDTO;
 using FakerImplementation;
 using System;
+using System.Collections.Generic;
 
 namespace Example
 {
@@ -8,9 +9,10 @@ namespace Example
     {
         static void Main(string[] args)
         {
+            Dictionary<Type, object> gens = new Dictionary<Type, object>();
+            gens.Add(typeof(List<string>), null);
             Faker faker = new Faker();
-            //faker.Create<Class1>();
-            //Console.WriteLine("Hello World!");
+            Console.WriteLine(typeof(List<string>));
         }
     }
 }

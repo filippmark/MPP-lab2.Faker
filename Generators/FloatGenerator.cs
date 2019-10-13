@@ -6,6 +6,7 @@ namespace Generators
     {
         public FloatGenerator(Random random) : base(random)
         {
+            GeneratedType = typeof(float);
         }
 
         public override object GenerateValue()

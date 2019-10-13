@@ -6,7 +6,7 @@ namespace Generators
     {
         public ByteGenerator(Random random) : base(random)
         {
-
+            GeneratedType = typeof(byte);
         }
 
         public override object GenerateValue()

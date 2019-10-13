@@ -10,13 +10,13 @@ namespace FakerImplementation
 {
     public class Faker : IFaker
     {
-        private readonly Dictionary<string, Generator> _generator;
+        private readonly Dictionary<Type, Generator> _generators;
         private Chooser _chooser;
 
         public Faker()
         {
-            _generator = new Dictionary<string, Generator>();
-            AddGenerators(_generator);
+            _generators = new Dictionary<Type, Generator>();
+            AddGenerators(_generators);
             //UploadPlugins(@"Plugins", _generator);
             _chooser = new Chooser(new Random());
         }
@@ -77,7 +77,7 @@ namespace FakerImplementation
             }
         }
 
-        private void AddGenerators(Dictionary<string, Generator> generators)
+        private void AddGenerators(Dictionary<Type, Generator> generators)
         {
             Assembly assembly = Assembly.GetAssembly(typeof(Generator));
             var types = assembly.DefinedTypes;
@@ -89,13 +89,13 @@ namespace FakerImplementation
                 {
                     Console.WriteLine(type);
                     ConstructorInfo[] constructorInfo = type.GetConstructors();
-                    Generator generator = (Generator)constructorInfo[0].Invoke(new object[] { random });
-                    generators.Add(type.FullName, generator);
+                    Generator generator = (Generator)Activator.CreateInstance(type, random);
+                    generators.Add(generator.GeneratedType, generator);
                 }
             }
         }
 
-        private void UploadPlugins(string path, Dictionary<string, Generator> generators)
+        private void UploadPlugins(string path, Dictionary<Type, Generator> generators)
         {
             Type pluginType = typeof(Generator);
             List<Type> plugins = new List<Type>();
@@ -121,15 +121,16 @@ namespace FakerImplementation
                 foreach (var plugin in plugins)
                 {
                     Generator generator = (Generator)Activator.CreateInstance(plugin, random);
-                    generators.Add(plugin.FullName, generator);
+                    generators.Add(generator.GeneratedType, generator);
                 }
             }
         }
 
         private object GenerateValue(Type type)
         {
-            Console.WriteLine(_chooser.GenerateValue(type));
-            return null;
+            Generator generator;
+            _generators.TryGetValue(type, out generator);
+            return generator.GenerateValue();
         }
     }
 }

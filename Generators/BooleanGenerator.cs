@@ -6,6 +6,7 @@ namespace Generators
     {
         public BooleanGenerator(Random random) : base(random)
         {
+            GeneratedType = typeof(bool);
         }
 
         public override object GenerateValue()
