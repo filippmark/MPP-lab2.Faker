@@ -26,7 +26,6 @@ namespace Generators
                 int amount = Random.Next(3, 5);
                 for (int i = 0; i < amount; i++)
                 {
-                    Console.WriteLine(generator.GenerateValue());
                     list.Add(generator.GenerateValue());
                 }
                 return list;

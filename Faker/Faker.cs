@@ -11,23 +11,32 @@ namespace FakerImplementation
     public class Faker : IFaker
     {
         private Dictionary<Type, Generator> _generators;
-        private Chooser _chooser;
-
+        private Stack<Type> _typesInProgress;
+        private Random _random;
         public Faker()
         {
             _generators = new Dictionary<Type, Generator>();
+            _typesInProgress = new Stack<Type>();
             AddGenerators(_generators);
             //UploadPlugins(@"Plugins", _generator);
-            _chooser = new Chooser(new Random());
         }
 
         public T Create<T>()
         {
-            object dto;
-            Dictionary<string, object> constructorParams = GenerateValuesForConstructor(typeof(T), out dto);
-            GeneratePublicProperties(typeof(T), constructorParams, dto);
-            GenerateFields(typeof(T), constructorParams, dto);
-            return (T)dto;
+            if(_typesInProgress.Contains(typeof(T)))
+            {
+                return default;
+            }
+            else
+            {
+                _typesInProgress.Push(typeof(T));
+                object dto;
+                Dictionary<string, object> constructorParams = GenerateValuesForConstructor(typeof(T), out dto);
+                GeneratePublicProperties(typeof(T), constructorParams, dto);
+                GenerateFields(typeof(T), constructorParams, dto);
+                _typesInProgress.Pop();
+                return (T)dto;
+            }
         }
 
         private Dictionary<string, object> GenerateValuesForConstructor(Type type, out object dto)
@@ -58,8 +67,6 @@ namespace FakerImplementation
             {
                 if (property.CanWrite && (!initialized.ContainsKey(property.Name)))
                 {
-                    Console.WriteLine(property.Name);
-                    Console.WriteLine(property.PropertyType);
                     property.SetValue(dto, GenerateValue(property.PropertyType));
                 }
             }
@@ -81,7 +88,7 @@ namespace FakerImplementation
         {
             Assembly assembly = Assembly.GetAssembly(typeof(Generator));
             var types = assembly.DefinedTypes;
-            Random random = new Random();
+            _random = new Random();
 
             foreach (var type in types)
             {
@@ -89,7 +96,7 @@ namespace FakerImplementation
                 {
                     Console.WriteLine(type);
                     ConstructorInfo[] constructorInfo = type.GetConstructors();
-                    Generator generator = (Generator)Activator.CreateInstance(type, random);
+                    Generator generator = (Generator)Activator.CreateInstance(type, _random);
                     generators.Add(generator.GeneratedType, generator);
                 }
             }
@@ -132,17 +139,40 @@ namespace FakerImplementation
             {
                 if( _generators.TryGetValue(type.GetGenericTypeDefinition(), out Generator generator) )
                 {
-                    Console.WriteLine(generator.TryToSetNestedType(type.GenericTypeArguments[0]));
-                    Console.WriteLine(generator.TryToSetDictWithGens(_generators));
+                    generator.TryToSetNestedType(type.GenericTypeArguments[0]);
+                    generator.TryToSetDictWithGens(_generators);
                     return generator.GenerateValue();
                 }
             }
             else
             {
-                if(_generators.TryGetValue(type, out Generator generator))
+                if (_generators.TryGetValue(type, out Generator generator))
+                {
                     return generator.GenerateValue();
-            }
+                }
+                else if (type.IsEnum)
+                {
+                    var enumValues = type.GetEnumValues();
+                    return enumValues.GetValue(_random.Next(enumValues.Length));
+                }
 
+                if ((!type.IsInterface) && (!type.IsAbstract))
+                {
+                    if ((type.IsClass) && (!Equals(type.Namespace, "System")))
+                    {
+                        return this.GetType().GetMethod(nameof(Create)).MakeGenericMethod(type).Invoke(this, null);
+                    }
+                    else if ((type.IsValueType) && (!Equals(type.Namespace, "System")))
+                    {
+                        Dictionary<string, object> initialized = new Dictionary<string, object>();
+                        object dto = Activator.CreateInstance(type);
+                        GeneratePublicProperties(type, initialized, dto);
+                        GenerateFields(type, initialized, dto);
+                        return dto;
+                    }
+                }
+            }
+            Console.WriteLine(type.FullName);
             return null;
         }
     }

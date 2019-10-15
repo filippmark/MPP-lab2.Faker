@@ -12,8 +12,6 @@ namespace Example
             Dictionary<Type, object> gens = new Dictionary<Type, object>();
             Faker faker = new Faker();
             Class1 classik = faker.Create<Class1>();
-            Console.WriteLine(typeof(List<string>).GetGenericTypeDefinition());
-            Console.WriteLine(typeof(List<string>).GenericTypeArguments[0]);
         }
     }
 }
