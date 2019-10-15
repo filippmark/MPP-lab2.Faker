@@ -10,9 +10,10 @@ namespace Example
         static void Main(string[] args)
         {
             Dictionary<Type, object> gens = new Dictionary<Type, object>();
-            gens.Add(typeof(List<string>), null);
             Faker faker = new Faker();
-            Console.WriteLine(typeof(List<string>));
+            Class1 classik = faker.Create<Class1>();
+            Console.WriteLine(typeof(List<string>).GetGenericTypeDefinition());
+            Console.WriteLine(typeof(List<string>).GenericTypeArguments[0]);
         }
     }
 }

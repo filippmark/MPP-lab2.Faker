@@ -10,7 +10,7 @@ namespace FakerImplementation
 {
     public class Faker : IFaker
     {
-        private readonly Dictionary<Type, Generator> _generators;
+        private Dictionary<Type, Generator> _generators;
         private Chooser _chooser;
 
         public Faker()
@@ -128,9 +128,22 @@ namespace FakerImplementation
 
         private object GenerateValue(Type type)
         {
-            Generator generator;
-            _generators.TryGetValue(type, out generator);
-            return generator.GenerateValue();
+            if ((type.IsGenericType) && (!type.GenericTypeArguments[0].IsGenericType))
+            {
+                if( _generators.TryGetValue(type.GetGenericTypeDefinition(), out Generator generator) )
+                {
+                    Console.WriteLine(generator.TryToSetNestedType(type.GenericTypeArguments[0]));
+                    Console.WriteLine(generator.TryToSetDictWithGens(_generators));
+                    return generator.GenerateValue();
+                }
+            }
+            else
+            {
+                if(_generators.TryGetValue(type, out Generator generator))
+                    return generator.GenerateValue();
+            }
+
+            return null;
         }
     }
 }
