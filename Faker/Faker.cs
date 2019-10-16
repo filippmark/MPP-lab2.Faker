@@ -15,10 +15,11 @@ namespace FakerImplementation
         private Random _random;
         public Faker()
         {
+            _random = new Random();
             _generators = new Dictionary<Type, Generator>();
             _typesInProgress = new Stack<Type>();
-            AddGenerators(_generators);
-            //UploadPlugins(@"Plugins", _generator);
+            UploadPlugins(@"C:\Users\lenovo\source\repos\MPP-lab2.Faker1\Plugins", _generators);
+            //AddGenerators(_generators);
         }
 
         public T Create<T>()
@@ -110,6 +111,7 @@ namespace FakerImplementation
 
             if (pluginDirectory.Exists)
             {
+
                 string[] pluginFiles = Directory.GetFiles(path, "*.dll");
                 foreach (var file in pluginFiles)
                 {
@@ -117,8 +119,9 @@ namespace FakerImplementation
                     Type[] types = assembly.GetTypes();
                     foreach (var type in types)
                     {
-                        if ((!(type.IsInterface || type.IsAbstract)) && (type.GetInterfaces().Contains(typeof(Generator))))
+                        if ((!(type.IsInterface || type.IsAbstract)) && (type.IsSubclassOf(typeof(Generator))))
                         {
+                            Console.WriteLine(type);
                             plugins.Add(type);
                         }
                     }
