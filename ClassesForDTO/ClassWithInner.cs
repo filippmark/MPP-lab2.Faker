@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClassesForDTO
 {
-    class ClassWithInner
+    public class ClassWithInner
     {
         public string str;
 

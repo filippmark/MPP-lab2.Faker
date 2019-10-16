@@ -4,15 +4,15 @@ using System.Text;
 
 namespace ClassesForDTO
 {
-    class ClassWithParametrCTOR
+    public class ClassWithParametrCTOR
     {
-        internal long longg;
-        public DateTime DateTime;
-        internal string str;
+        public char ch { get; }
+        public DateTime dateTime;
+        public string str { get; }
 
-        public ClassWithParametrCTOR(long longg, string str)
+        public ClassWithParametrCTOR(char ch, string str)
         {
-            this.longg = longg;
+            this.ch = ch;
             this.str = str;
         }
     }
