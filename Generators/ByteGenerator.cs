@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 namespace Generators
 {
@@ -9,7 +10,7 @@ namespace Generators
             GeneratedType = typeof(byte);
         }
 
-        public override object GenerateValue()
+        public override object GenerateValue(Func<Type, object> generate)
         {
             return (byte)Random.Next();
         }

@@ -15,22 +15,28 @@ namespace Generators
             GeneratedType = typeof(List<>);
         }
 
-        public override object GenerateValue()
+        public override object GenerateValue(Func<Type, object> generate)
         {
+            Type listType = GeneratedType.MakeGenericType(new[] { nestedType });
+            IList list = (IList)Activator.CreateInstance(listType);
+            int amount = Random.Next(3, 5);
+
             if (generators.TryGetValue(nestedType, out Generator generator))
             {
-                Type listType = GeneratedType.MakeGenericType(new[] { nestedType });
-                IList list = (IList)Activator.CreateInstance(listType);
-
-
-                int amount = Random.Next(3, 5);
                 for (int i = 0; i < amount; i++)
                 {
-                    list.Add(generator.GenerateValue());
+                    list.Add(generator.GenerateValue(generate));
                 }
                 return list;
             }
-            return null;
+            else
+            {
+                for (int i = 0; i < amount; i++)
+                {
+                    list.Add(generate(nestedType));
+                }
+                return list;
+            }
         }
 
     }

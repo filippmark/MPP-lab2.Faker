@@ -26,5 +26,7 @@ namespace ClassesForDTO
         public DateTime DT1 { get; set; }
 
         public Days Ds { get; set; }
+
+        public List<Class1> Listik { get; set; }
     }
 }

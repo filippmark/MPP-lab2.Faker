@@ -1,5 +1,4 @@
-﻿using GeneratorChooser;
-using Generators;
+﻿using Generators;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,13 +12,14 @@ namespace FakerImplementation
         private Dictionary<Type, Generator> _generators;
         private Stack<Type> _typesInProgress;
         private Random _random;
+
         public Faker()
         {
             _random = new Random();
             _generators = new Dictionary<Type, Generator>();
             _typesInProgress = new Stack<Type>();
-            UploadPlugins(@"C:\Users\lenovo\source\repos\MPP-lab2.Faker1\Plugins", _generators);
-            //AddGenerators(_generators);
+            //UploadPlugins(@"C:\Users\lenovo\source\repos\MPP-lab2.Faker1\Plugins", _generators);
+            AddGenerators(_generators);
         }
 
         public T Create<T>()
@@ -144,14 +144,14 @@ namespace FakerImplementation
                 {
                     generator.TryToSetNestedType(type.GenericTypeArguments[0]);
                     generator.TryToSetDictWithGens(_generators);
-                    return generator.GenerateValue();
+                    return generator.GenerateValue(GenerateValue);
                 }
             }
             else
             {
                 if (_generators.TryGetValue(type, out Generator generator))
                 {
-                    return generator.GenerateValue();
+                    return generator.GenerateValue(GenerateValue);
                 }
                 else if (type.IsEnum)
                 {

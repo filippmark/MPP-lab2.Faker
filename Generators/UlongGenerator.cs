@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace Generators
@@ -11,7 +12,7 @@ namespace Generators
             GeneratedType = typeof(ulong);
         }
 
-        public override object GenerateValue()
+        public override object GenerateValue(Func<Type, object> generate)
         {
             byte[] buf = new byte[8];
             Random.NextBytes(buf);

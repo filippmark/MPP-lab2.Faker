@@ -12,6 +12,7 @@ namespace Example
             Dictionary<Type, object> gens = new Dictionary<Type, object>();
             Faker faker = new Faker();
             Class1 classik = faker.Create<Class1>();
+            Console.WriteLine(classik.Listik[0] == null ? "kek" : "lol");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Generators
 {
@@ -37,6 +38,6 @@ namespace Generators
             return false;
         }
 
-        public abstract object GenerateValue();
+        public abstract object GenerateValue(Func<Type, object> generate);
     }
 }
