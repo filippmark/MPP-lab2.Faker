@@ -11,8 +11,8 @@ namespace Example
         {
             Dictionary<Type, object> gens = new Dictionary<Type, object>();
             Faker faker = new Faker();
-            var dto = faker.Create<ClassWithParametrCTOR>();
-            Console.WriteLine(dto.str);
+            var dto = faker.Create<System.Xml.Serialization.XmlSerializer>();
+
             /*Class1 classik = faker.Create<Class1>();
             Console.WriteLine(classik.Listik[0] == null ? "kek" : "lol");*/
         }

@@ -33,10 +33,18 @@ namespace FakerImplementation
                 _typesInProgress.Push(typeof(T));
                 object dto;
                 Dictionary<string, object> constructorParams = GenerateValuesForConstructor(typeof(T), out dto);
-                GeneratePublicProperties(typeof(T), constructorParams, dto);
-                GenerateFields(typeof(T), constructorParams, dto);
-                _typesInProgress.Pop();
-                return (T)dto;
+                if (dto != null)
+                {
+                    GeneratePublicProperties(typeof(T), constructorParams, dto);
+                    GenerateFields(typeof(T), constructorParams, dto);
+                    _typesInProgress.Pop();
+                    return (T)dto;
+                }
+                else
+                {
+                    _typesInProgress.Pop();
+                    return default;
+                }
             }
         }
 
@@ -55,9 +63,17 @@ namespace FakerImplementation
             Dictionary<string, object> generatedParams = new Dictionary<string, object>();
             foreach (var param in parameters)
             {
-                generatedParams.Add(param.Name, GenerateValue(param.ParameterType));
+                var parameter = GenerateValue(param.ParameterType);
+                if (parameter == null)
+                {
+                    dto = null;
+                    return null;
+                }
+                generatedParams.Add(param.Name, parameter);
             }
+            
             dto = constructor.Invoke(generatedParams.Values.ToArray());
+            
             return generatedParams;
         }
 
