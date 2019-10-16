@@ -11,6 +11,7 @@ namespace Generators
         protected Type nestedType;
 
         protected Dictionary<Type, Generator> generators;
+
         public Generator(Random randomizer)
         {
             Random = randomizer;
