@@ -8,6 +8,8 @@ namespace ClassesForDTO
     {
         public string str;
 
+        public Dictionary<string, object> dict;
+
         public ClassWithNoInner NoInner { get; set; }
     }
 }

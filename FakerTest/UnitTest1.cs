@@ -40,6 +40,7 @@ namespace FakerTest
         {
             var faker = new Faker();
             var dto = faker.Create<ClassWithInner>();
+            Assert.IsNull(dto.dict);
             Assert.AreNotEqual(dto.str, default);
             Assert.IsNotNull(dto.NoInner);
         }
@@ -69,5 +70,20 @@ namespace FakerTest
             Assert.AreEqual(dto, default);
         }
 
+        private class PrivateCtr
+        {
+            private PrivateCtr()
+            {
+
+            }
+        }
+
+        [TestMethod]
+        public void ShouldHandlePrivateCtr()
+        {
+            var faker = new Faker();
+            var dto = faker.Create<PrivateCtr>();
+            Assert.AreEqual(dto, default);
+        }
     }
 }

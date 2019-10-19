@@ -18,7 +18,7 @@ namespace FakerImplementation
             _random = new Random();
             _generators = new Dictionary<Type, Generator>();
             _typesInProgress = new Stack<Type>();
-            //UploadPlugins(@"C:\Users\lenovo\source\repos\MPP-lab2.Faker1\Plugins", _generators);
+            UploadPlugins(@"C:\Users\\lenovo\source\repos\MPP-lab2.Faker1\Plugins", _generators);
             AddGenerators(_generators);
         }
 
@@ -48,33 +48,43 @@ namespace FakerImplementation
             }
         }
 
+
         private Dictionary<string, object> GenerateValuesForConstructor(Type type, out object dto)
         {
             ConstructorInfo[] constructorInfos = type.GetConstructors();
-            ConstructorInfo constructor = constructorInfos[0];
-            foreach (var constructorVariant in constructorInfos)
+            Console.WriteLine(constructorInfos.Length);
+            if (constructorInfos.Length == 0)
             {
-                if (constructorVariant.GetParameters().Length > constructor.GetParameters().Length)
-                {
-                    constructor = constructorVariant;
-                }
+                dto = null;
+                return null;
             }
-            ParameterInfo[] parameters = constructor.GetParameters();
-            Dictionary<string, object> generatedParams = new Dictionary<string, object>();
-            foreach (var param in parameters)
+            else
             {
-                var parameter = GenerateValue(param.ParameterType);
-                if (parameter == null)
+                ConstructorInfo constructor = constructorInfos[0];
+                foreach (var constructorVariant in constructorInfos)
                 {
-                    dto = null;
-                    return null;
+                    if (constructorVariant.GetParameters().Length > constructor.GetParameters().Length)
+                    {
+                        constructor = constructorVariant;
+                    }
                 }
-                generatedParams.Add(param.Name, parameter);
+                ParameterInfo[] parameters = constructor.GetParameters();
+                Dictionary<string, object> generatedParams = new Dictionary<string, object>();
+                foreach (var param in parameters)
+                {
+                    var parameter = GenerateValue(param.ParameterType);
+                    if (parameter == null)
+                    {
+                        dto = null;
+                        return null;
+                    }
+                    generatedParams.Add(param.Name, parameter);
+                }
+
+                dto = constructor.Invoke(generatedParams.Values.ToArray());
+
+                return generatedParams;
             }
-            
-            dto = constructor.Invoke(generatedParams.Values.ToArray());
-            
-            return generatedParams;
         }
 
         private void GeneratePublicProperties(Type type, Dictionary<string, object> initialized, object dto)
@@ -131,13 +141,16 @@ namespace FakerImplementation
                 string[] pluginFiles = Directory.GetFiles(path, "*.dll");
                 foreach (var file in pluginFiles)
                 {
-                    Assembly assembly = Assembly.LoadFrom(file);
+                    Console.WriteLine(file);
+                    Assembly assembly = Assembly.LoadFrom(new FileInfo(file).FullName);
                     Type[] types = assembly.GetTypes();
+                    Console.WriteLine(types.Length);
                     foreach (var type in types)
                     {
+
+                        Console.WriteLine(type);
                         if ((!(type.IsInterface || type.IsAbstract)) && (type.IsSubclassOf(typeof(Generator))))
                         {
-                            Console.WriteLine(type);
                             plugins.Add(type);
                         }
                     }
